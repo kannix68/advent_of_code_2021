@@ -60,7 +60,7 @@ tests = """
 
 
 # %%
-def solve01pt1(inp):
+def solve_d01pt1(inp):
   """Solve Day 1 part 1."""
   inp = map(int, inp.split())
   # diff-window ("right"): first row will have NaN, so omit:
@@ -72,12 +72,12 @@ def solve01pt1(inp):
 # %%
 #log.setLevel(logging.DEBUG)
 expected = 7
-result = solve01pt1(tests)
+result = solve_d01pt1(tests)
 aoc.assert_msg("test solve day 1 part 1", result == expected) 
 
 # %%
 ins = aoc.read_file_to_str("./in/day01.in")
-out = solve01pt1(ins)
+out = solve_d01pt1(ins)
 print("day 1 part 1 output:", out)
 
 # %%
@@ -85,7 +85,7 @@ print("Day 1 part 2")
 
 
 # %%
-def solve01pt2(inp):
+def solve_d01pt2(inp):
   """Solve Day 1 part 2."""
   inp = map(int, inp.split())
   # rolling(3)-window ("right"): first 3 rows will have NaN, so omit:
@@ -96,22 +96,29 @@ def solve01pt2(inp):
 
 # %%
 expected = 5
-result = solve01pt2(tests)
+result = solve_d01pt2(tests)
 aoc.assert_msg("test solve day 1 part 2", result == expected) 
 
 # %%
-out = solve01pt2(ins)
+out = solve_d01pt2(ins)
 print("day 1 part 2 output:", out)
 
-# %%
-## Day 2: Dive!
+# %% [markdown]
+# ## Day 2: Dive!
 
 # %%
 print("Day 2")
 
-
 # %%
-def solve02pt1(inp):
+tests = """
+forward 5
+down 5
+forward 8
+up 3
+down 8
+forward 2""".strip()
+
+def solve_d02pt1(inp):
   log.trace(inp)
   cmds = inp.splitlines()
   pos = [0, 0]
@@ -130,21 +137,13 @@ def solve02pt1(inp):
   log.debug(f"rc={rc}")
   return rc
 
-tests = """
-forward 5
-down 5
-forward 8
-up 3
-down 8
-forward 2""".strip()
 expected = 150
-
-result = solve02pt1(tests)
+result = solve_d02pt1(tests)
 aoc.assert_msg("test solve day 1 part 1", result == expected)
 
 # %%
 ins = aoc.read_file_to_str("./in/day02.in")
-out = solve02pt1(ins)
+out = solve_d02pt1(ins)
 print("day 2 part 1 output:", out)
 
 # %%
@@ -152,7 +151,7 @@ print("Day 2 part 2")
 
 
 # %%
-def solve02pt2(inp):
+def solve_d02pt2(inp):
   HPOS, DEPTH, AIM = 0, 1, 2
   cmds = inp.splitlines()
   pos = [0, 0, 0]
@@ -172,12 +171,75 @@ def solve02pt2(inp):
 
 # `tests` remains the same
 expected = 900
-result = solve02pt2(tests)
+result = solve_d02pt2(tests)
 aoc.assert_msg("test solve day 2 part 2", result == expected)
 
 # %%
 # `ins` remains the same
-out = solve02pt2(ins)
+out = solve_d02pt2(ins)
 print("day 2 part 2 output:", out)
+
+# %% [markdown]
+# ## Day 3: Binary Diagnostic
+
+# %%
+print("Day 3")
+
+# %%
+tests = """
+00100
+11110
+10110
+10111
+10101
+01111
+00111
+11100
+10000
+11001
+00010
+01010
+""".strip()
+
+def solve_d03pt1(ins):
+  lst = ins.splitlines()
+  for idx in range(len(lst)):
+    lst[idx] = mapl(int, list(lst[idx]))
+  l = len(lst)
+  log.debug(lst)
+  in_t = [list(i) for i in zip(*lst)]  # transpose
+  log.debug(in_t)
+  blst = []
+  cblst = []
+  for col in in_t:
+    c0, c1 = col.count(0), l - col.count(0)
+    if c0 > c1:
+      i = 0
+      c = 1
+    else:
+      i = 1
+      c = 0
+    blst.append(i)
+    cblst.append(c)
+  log.debug(blst)
+  bnum = int(str.join('', map(str, blst)), 2)
+  cnum = int(str.join('', map(str, cblst)), 2)
+  log.debug([bnum, cnum])
+  return bnum * cnum
+
+expected = 198
+result = solve_d03pt1(tests)
+aoc.assert_msg("test solve day 1 part 1", result == expected)
+
+# %%
+ins = aoc.read_file_to_str("./in/day03.in")
+out = solve_d03pt1(ins)
+print("day 2 part 1 output:", out)
+
+# %%
+print("Day 3 part 2")
+
+# %%
+print("tbd")
 
 # %%
