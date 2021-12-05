@@ -390,4 +390,8 @@ aoc.assert_msg("test solve day 4 part 2", result == expected)
 out = solve_d04pt2(ins)
 print("day 4 part 2 output:", out)
 
+# %% [markdown]
+# ## Day 5: Hydrothermal Venture
+# See coconut language solution.
+
 # %%
