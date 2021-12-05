@@ -19,10 +19,11 @@
 # Using anaconda distro, conda v4.10.3. installation on MacOS v10.14.6 "Mojave".
 
 # %%
-import sys
-import logging
+import copy
 import itertools
+import logging
 import re
+import sys
 
 import numpy as np
 import pandas as pd
@@ -234,7 +235,7 @@ def solve_d03pt1(ins):
 expected = 198
 log.setLevel(logging.INFO)
 result = solve_d03pt1(tests)
-aoc.assert_msg("test solve day 1 part 1", result == expected)
+aoc.assert_msg("test solve day 3 part 1", result == expected)
 
 # %%
 ins = aoc.read_file_to_str("./in/day03.in")
@@ -244,8 +245,8 @@ print("day 3 part 1 output:", out)
 # %%
 print("Day 3 part 2")
 
-# %%
-print("tbd")
+# %% [markdown]
+# See coconut language solution.
 
 # %% [markdown]
 # ## Day 4: Giant Squid

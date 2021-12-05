@@ -19,10 +19,11 @@
 # Using anaconda distro, conda v4.10.3, and coconut language. installation on MacOS v10.14.6 "Mojave".
 
 # %%
-import sys
-import logging
+import copy
 import itertools
+import logging
 import re
+import sys
 
 from collections import defaultdict
 
@@ -174,6 +175,131 @@ aoc.assert_msg("test solve day 1 part 2", result == expected)
 # `ins` remains the same
 out = solve_d02pt2(ins)
 f"day 2 part 2 output: {out}" |> print
+
+# %% [markdown]
+# ## Day 3: Binary Diagnostic
+
+# %%
+"Day 3" |> print
+
+# %%
+tests = """
+00100
+11110
+10110
+10111
+10101
+01111
+00111
+11100
+10000
+11001
+00010
+01010
+""".strip()
+
+def T(lst):
+  """Transpose a 2d list."""
+  return [list(i) for i in zip(*lst)]  # transpose
+
+def bitlist2int(bitlist):
+  return int(str.join('', map(str, bitlist)), 2)
+
+def solve_d03pt1(ins):
+  lst = ins.splitlines()
+  for idx in range(len(lst)):
+    lst[idx] = map(int, list(lst[idx])) |> list
+  l = len(lst)
+  log.debug(lst)
+  in_t = T(lst)
+  log.debug(in_t)
+  blst = []
+  cblst = []
+  for col in in_t:
+    c0, c1 = col.count(0), l - col.count(0)
+    if c0 > c1:
+      i = 0
+      c = 1
+    else:
+      i = 1
+      c = 0
+    blst.append(i)
+    cblst.append(c)
+  log.debug(blst)
+  bnum = bitlist2int(blst)
+  cnum = bitlist2int(cblst)
+  log.debug([bnum, cnum])
+  return bnum * cnum
+
+expected = 198
+log.setLevel(logging.INFO)
+result = solve_d03pt1(tests)
+aoc.assert_msg("test solve day 3 part 1", result == expected)
+
+# %%
+ins = aoc.read_file_to_str("./in/day03.in")
+out = solve_d03pt1(ins)
+f"day 3 part 1 output: {out}" |> print
+
+# %%
+"Day 3 part 2" |> print
+
+# %%
+def solve_d03pt2(ins):
+  lst = ins.splitlines()
+  for idx in range(len(lst)):
+    lst[idx] = map(int, list(lst[idx])) |> list
+  elemlen = len(lst[0])
+  lstlen = len(lst)
+  tlst = T(lst)
+  log.debug(lst)
+  log.info(f"elemlen={elemlen}, lstlen={lstlen}")
+  olst = copy.deepcopy(lst)
+  for i in range(elemlen):
+    sm1 = tlst[i].count(1)
+    sm0 = lstlen - sm1
+    if sm1 >= sm0:
+      trg = 1
+    else:
+      trg = 0
+    log.debug(f"oxy iter-#{i} lstlen={lstlen} trg={trg}")
+    lst = lst |> filter$(-> _[i] == trg) |> list
+    tlst = T(lst)
+    lstlen = len(lst)
+    if lstlen <= 1:
+      oxyrat_lst = lst[0]
+      oxyrat = bitlist2int(oxyrat_lst)
+      log.debug(f"oxyrat={oxyrat_lst} => {oxyrat}")
+      break
+  lst = olst
+  tlst = T(olst)
+  lstlen = len(lst)
+  for i in range(elemlen):
+    sm1 = tlst[i].count(1)
+    sm0 = lstlen - sm1
+    if sm1 >= sm0:
+      trg = 0
+    else:
+      trg = 1
+    log.debug(f"co2 iter-#{i} lstlen={lstlen} trg={trg}")
+    lst = lst |> filter$(-> _[i] == trg) |> list
+    tlst = T(lst)
+    lstlen = len(lst)
+    if lstlen <= 1:
+      co2rat_lst = lst[0]
+      co2rat = bitlist2int(co2rat_lst)
+      log.debug(f"co2rat={co2rat_lst} => {co2rat}")
+      break
+  return oxyrat * co2rat
+
+expected = 230
+log.setLevel(logging.INFO)
+result = solve_d03pt2(tests)
+aoc.assert_msg("test solve day 3 part 2", result == expected)
+
+# %%
+out = solve_d03pt2(ins)
+f"day 3 part 2 output: {out}" |> print
 
 # %% [markdown]
 # ## Day 5: Hydrothermal Venture
