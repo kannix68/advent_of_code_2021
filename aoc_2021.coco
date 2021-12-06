@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # ---
 # jupyter:
 #   jupytext:
@@ -24,6 +25,7 @@ import itertools
 import logging
 import re
 import sys
+import time
 
 from collections import defaultdict
 
@@ -349,14 +351,14 @@ def solve_d05pt1(ins):
   return intersects
 
 expected = 5
-log.setLevel(logging.DEBUG)
+log.setLevel(logging.INFO)
 result = solve_d05pt1(tests)
 aoc.assert_msg("test solve day 5 part 1", result == expected)
 
 # %%
 ins = aoc.read_file_to_str("./in/day05.in")
 out = solve_d05pt1(ins)
-f"day 2 part 1 output: {out}" |> print
+f"day 5 part 1 output: {out}" |> print
 
 # %%
 "Day 5 part 2" |> print
@@ -409,10 +411,92 @@ def solve_d05pt2(ins):
 expected = 12
 log.setLevel(logging.INFO)
 result = solve_d05pt2(tests)
-aoc.assert_msg("test solve day 5 part 1", result == expected)
+aoc.assert_msg("test solve day 5 part 2", result == expected)
 
 # %%
 out = solve_d05pt2(ins)
 f"day 2 part 2 output: {out}" |> print
+
+# %% [markdown]
+# ## Day 6: Lanternfish
+# DE: [Nikolaus von Myra](https://de.wikipedia.org/wiki/Nikolaus_von_Myra)  \
+# EN: [Saint Nicholas](https://en.wikipedia.org/wiki/Saint_Nicholas)  \
+# ES: [Nicolás de Bari](https://es.wikipedia.org/wiki/Nicol%C3%A1s_de_Bari)
+
+# %%
+"Day 6" |> print
+
+# %%
+tests = "3,4,3,1,2"
+
+# %%
+def solve_d06pt1(ins, n):
+  """Lanternfish, "brute force"."""
+  cells = ins.split(",") |> map$(int) |> list
+  log.trace(f"lfish={cells}")
+  log.debug(f"lfish-num={len(cells)}")
+  tms = time.time()
+  for itr in range(n):
+    log.debug(f"iter-#{itr} took {round(time.time()-tms, 2)}s len={len(cells)}")
+    toappend = 0
+    for idx in range(len(cells)):
+      case cells[idx]:
+        match 0:
+          toappend += 1
+          cells[idx] = 6
+      else:
+        cells[idx] -= 1
+    cells = cells + [8] * toappend
+    log.trace(f"iter#{itr} lfish={cells}")
+  log.info(f"End iter-#{itr} took {round(time.time()-tms, 2)}s len={len(cells)}")
+  return len(cells)
+
+expected = [[18, 26], [80,5934]]
+log.setLevel(logging.INFO)
+for e in expected:
+  n, expct = e
+  result = solve_d06pt1(tests, n)
+  aoc.assert_msg(f"test solve day 6 part 1; expect fish={expct} <= n={n} found {result}", result == expct)
+
+# %%
+ins = aoc.read_file_to_str("./in/day06.in")
+out = solve_d06pt1(ins, 80)
+f"day 6 part 1 output: {out}" |> print
+
+# %%
+"Day 6 part 2" |> print
+
+# %%
+def solve_d06pt2(ins, n):
+  """Lanternfish, just keep counting cellstates-number."""
+  tms = time.time()
+  cells = ins.split(",") |> map$(int) |> list
+  log.debug(f"lfish-num={len(cells)}")
+  cellsts = []
+  for idx in range(9):
+    cellsts.append(cells.count(idx))
+  log.debug(f"initial cellstates={cellsts}")
+  for itr in range(n):
+    toappend, cellsts = cellsts[0], cellsts[1:]
+    assert len(cellsts) == 8, f"len={len(cellsts)}"
+    cellsts[6] += toappend
+    cellsts = cellsts + [toappend]
+    if itr % 10 == 0:
+      #log.info(f"iter-#{itr} count={sum(cellsts)}. cellstates={cellsts}. took {int(time.time()-tms)}s")
+      log.debug(f"iter-#{itr} count={sum(cellsts)}. took {int(time.time()-tms)}s")
+  log.info(f"iter-#{itr} ends. took {round(time.time()-tms, 4)}s")
+  return sum(cellsts)
+
+# %%
+expected = [[256, 26984457539]]
+log.setLevel(logging.INFO)
+for e in expected:
+  n, expct = e
+  result = solve_d06pt2(tests, n)
+  aoc.assert_msg(f"test solve day 6 part 1; expect fish={expct} <= n={n} found {result}", result == expct)
+
+# %%
+out = solve_d06pt2(ins, 256)
+f"day 6 part 2 output: {out}" |> print
 
 # %%

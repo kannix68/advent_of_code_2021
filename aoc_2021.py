@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # ---
 # jupyter:
 #   jupytext:
@@ -394,5 +395,13 @@ print("day 4 part 2 output:", out)
 # %% [markdown]
 # ## Day 5: Hydrothermal Venture
 # See coconut language solution.
+
+# %% [markdown]
+# ## Day 6: Lanternfish
+# See coconut language solution.
+#
+# DE: [Nikolaus von Myra](https://de.wikipedia.org/wiki/Nikolaus_von_Myra)  \
+# EN: [Saint Nicholas](https://en.wikipedia.org/wiki/Saint_Nicholas)  \
+# ES: [Nicolás de Bari](https://es.wikipedia.org/wiki/Nicol%C3%A1s_de_Bari)
 
 # %%
