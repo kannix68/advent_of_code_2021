@@ -499,4 +499,76 @@ for e in expected:
 out = solve_d06pt2(ins, 256)
 f"day 6 part 2 output: {out}" |> print
 
+# %% [markdown]
+# ## Day 7: The Treachery of Whales
+
+# %%
+"Day 7" |> print
+
+# %%
+tests = "16,1,2,0,4,2,7,1,2,14"
+
+# %%
+def solve_d07pt1(ins):
+  """Day 7 pt1 solution."""
+  ins = ins.split(",") |> map$(int) |> list
+  mn, mx = min(ins), max(ins)
+  fc_min = 1e20
+  for trg in range(mn, mx+1):
+    fc = 0
+    for xpos in ins:
+      fc += abs(xpos - trg)
+    if fc < fc_min:
+      log.debug(f"pos={trg}, new min fuelcost={fc}")
+      fc_min = fc
+  return fc_min
+
+expected = 37
+log.setLevel(logging.INFO)
+result = solve_d07pt1(tests)
+aoc.assert_msg(f"test solve day 7 part 1; expected={expct}, found {result}", result == expected)
+
+# %%
+ins = aoc.read_file_to_str("./in/day07.in")
+out = solve_d07pt1(ins)
+f"day 7 part 1 output: {out}" |> print
+
+# %%
+def solve_d07pt2(ins):
+  """Day 7 pt2 solution."""
+  ins = ins.split(",") |> map$(int) |> list
+  mn, mx = min(ins), max(ins)
+  fc_min = 1e20
+  cst = 0
+  seq = []
+  for idx in range(0, mx+1): # costs per step
+    seq.append(cst)
+    cst += 1
+  costseq = []
+  for idx in range(0, mx+1): # costs for distance
+    #log.debug(f"dst={idx} costseq={seq[0:idx+1]}")
+    costseq.append(sum(seq[0:idx+1]))
+  log.debug(seq)
+  for trg in range(mn, mx+1):
+    fc = 0
+    fclst = []
+    for xpos in ins:
+      dist = abs(xpos - trg)
+      fclst.append(costseq[dist])
+      fc += costseq[dist]
+    log.debug(f"  pos={trg}, fuelcosts={fclst}")
+    if fc < fc_min:
+      log.debug(f"pos={trg}, new min fuelcost={fc}")
+      fc_min = fc
+  return fc_min
+
+expected = 168
+log.setLevel(logging.INFO)
+result = solve_d07pt2(tests)
+aoc.assert_msg(f"test solve day 7 part 2; expected={expected}, found {result}", result == expected)
+
+# %%
+out = solve_d07pt2(ins)
+f"day 7 part 2 output: {out}" |> print
+
 # %%

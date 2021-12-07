@@ -404,4 +404,8 @@ print("day 4 part 2 output:", out)
 # EN: [Saint Nicholas](https://en.wikipedia.org/wiki/Saint_Nicholas)  \
 # ES: [Nicolás de Bari](https://es.wikipedia.org/wiki/Nicol%C3%A1s_de_Bari)
 
+# %% [markdown]
+# ## Day 7: The Treachery of Whales
+# See coconut language solution.
+
 # %%
