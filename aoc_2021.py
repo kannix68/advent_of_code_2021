@@ -408,4 +408,12 @@ print("day 4 part 2 output:", out)
 # ## Day 7: The Treachery of Whales
 # See coconut language solution.
 
+# %% [markdown]
+# ## Day 8
+# See coconut language solution.
+
+# %% [markdown]
+# ## Day 9
+# See coconut language solution.
+
 # %%

@@ -571,4 +571,236 @@ aoc.assert_msg(f"test solve day 7 part 2; expected={expected}, found {result}", 
 out = solve_d07pt2(ins)
 f"day 7 part 2 output: {out}" |> print
 
+# %% [markdown]
+# ## Day 8: Seven Segment Search
+
+# %%
+"Day 8" |> print
+
+# %%
+segments = """ 
+  0:      1:      2:      3:      4:
+ aaaa    ....    aaaa    aaaa    ....
+b    c  .    c  .    c  .    c  b    c
+b    c  .    c  .    c  .    c  b    c
+ ....    ....    dddd    dddd    dddd
+e    f  .    f  e    .  .    f  .    f
+e    f  .    f  e    .  .    f  .    f
+ gggg    ....    gggg    gggg    ....
+
+  5:      6:      7:      8:      9:
+ aaaa    aaaa    aaaa    aaaa    aaaa
+b    .  b    .  .    c  b    c  b    c
+b    .  b    .  .    c  b    c  b    c
+ dddd    dddd    ....    dddd    dddd
+.    f  e    f  .    f  e    f  .    f
+.    f  e    f  .    f  e    f  .    f
+ gggg    gggg    ....    gggg    gggg
+""".strip()
+ 
+d = {
+  0: ["a","b","c","e","f","g"],
+  1: ["c","f"],
+  2: ["a","c","d","e","g"],
+  3: ["a","c","d","f","g"],
+  4: ["b","c","d","f"],
+  5: ["a","b","d","f","g"],
+  6: ["a","b","d","e","f","g"],
+  7: ["a","c","f"],
+  8: ["a","b","c","d","e","f","g"],
+  9: ["a","b","c","d","f","g"],
+}
+
+d2 = {
+  1: ["c","f"],
+  7: ["a","c","f"],
+  4: ["b","c","d","f"],
+  2: ["a","c","d","e","g"],
+  3: ["a","c","d","f","g"],
+  5: ["a","b","d","f","g"],
+  0: ["a","b","c","e","f","g"],
+  6: ["a","b","d","e","f","g"],
+  9: ["a","b","c","d","f","g"],
+  8: ["a","b","c","d","e","f","g"],
+}
+
+# %%
+tests1 = """acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab | cdfeb fcadb cdfeb cdbaf""".strip()
+
+tests = """
+be cfbegad cbdgef fgaecd cgeb fdcge agebfd fecdb fabcd edb | fdgacbe cefdb cefbgd gcbe
+edbfga begcd cbg gc gcadebf fbgde acbgfd abcde gfcbed gfec | fcgedb cgb dgebacf gc
+fgaebd cg bdaec gdafb agbcfd gdcbef bgcad gfac gcb cdgabef | cg cg fdcagb cbg
+fbegcd cbd adcefb dageb afcb bc aefdc ecdab fgdeca fcdbega | efabcd cedba gadfec cb
+aecbfdg fbg gf bafeg dbefa fcge gcbea fcaegb dgceab fcbdga | gecf egdcabf bgf bfgea
+fgeab ca afcebg bdacfeg cfaedg gcfdb baec bfadeg bafgc acf | gebdcfa ecba ca fadegcb
+dbcfg fgd bdegcaf fgec aegbdf ecdfab fbedc dacgb gdcebf gf | cefg dcbef fcge gbcadfe
+bdfegc cbegaf gecbf dfcage bdacg ed bedf ced adcbefg gebcd | ed bcgafe cdgba cbgef
+egadfb cdbfeg cegd fecab cgb gbdefca cg fgcdab egfdb bfceg | gbdfcae bgc cg cgb
+gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
+""".strip()
+
+# %%
+def solve_d08pt1(ins):
+  """Day 8 pt1 solution."""
+  ins = ins.splitlines() # |> filter$(-> "|" not in _) |> list
+  for idx in range(len(ins)):
+    ins[idx] = ins[idx].split(" | ")[1]
+  ct = 0
+  for ln in ins:
+    for grp in ln.split(" "):
+      if len(grp) in [2, 4, 3, 7]:
+        ct += 1
+  log.trace([ins, ct])
+  return ct
+
+expected = 26
+log.setLevel(logging.DEBUG)
+#log.setLevel(logging.INFO)
+result = solve_d08pt1(tests)
+aoc.assert_msg(f"test solve day 8 part 1; expected={expected}, found {result}", result == expected)
+
+# %%
+ins = aoc.read_file_to_str("./in/day08.in")
+out = solve_d08pt1(ins)
+f"day 8 part 1 output: {out}" |> print
+
+# %%
+def solve_d08pt2(ins):
+  """Day 8 pt2 solution."""
+  return None
+
+expected1 = 5353
+expected = 61229
+#log.setLevel(logging.DEBUG)
+#log.setLevel(logging.INFO)
+#result = solve_d08pt2(tests1)
+#result = solve_d08pt2(tests)
+#aoc.assert_msg(f"test solve day 7 part 2; expected={expected}, found {result}", result == expected)
+
+# %% [markdown]
+# ## Day 9: Smoke Basin
+
+# %%
+"Day 9" |> print
+
+tests = """
+2199943210
+3987894921
+9856789892
+8767896789
+9899965678
+""".strip()
+
+# %%
+def solve_d09pt1(ins):
+  """Day 9 pt1 solution."""
+  ins = ins.splitlines() |> map$(-> list(_)) |> list
+  xdim , ydim = len(ins[0]), len(ins)
+  for y in range(ydim):
+    for x in range(xdim):
+      ins[y][x] = int(ins[y][x])
+  log.debug(f"grid[{xdim},{ydim}]...!")
+  log.trace(f"grid[{xdim},{ydim}]")
+  locminsum = 0
+  for y in range(ydim):
+    for x in range(xdim):
+      pt = ins[y][x]
+      nbs = aoc.get_neighbors(ins, x, y) |> filter$(-> _ != "") |> list
+      #log.trace(f"pt[{x},{y}]={pt} neibs={nbs}")
+      #all(flag == 0 for (_, _, flag) in items)
+      if pt < min(nbs):
+        log.trace(f"pt[{x},{y}]={pt} IS locmin, neibs={nbs}")
+        locminsum += pt+1
+  log.info(f"rc locminsum={locminsum}")
+  return locminsum
+
+expected = 15
+log.setLevel(logging.DEBUG)
+#log.setLevel(logging.INFO)
+result = solve_d09pt1(tests)
+aoc.assert_msg(f"test solve day 8 part 1; expected={expected}, found {result}", result == expected)
+
+# %%
+ins = aoc.read_file_to_str("./in/day09.in")
+out = solve_d09pt1(ins)
+f"day 9 part 1 output: {out}" |> print
+
+# %%
+"Day 9 part 2" |> print
+
+def get_locmins(ins):
+  xdim , ydim = len(ins[0]), len(ins)
+  locmins = []
+  for y in range(ydim):
+    for x in range(xdim):
+      pt = ins[y][x]
+      nbs = aoc.get_neighbors(ins, x, y) |> filter$(-> _ != "") |> list
+      #log.trace(f"pt[{x},{y}]={pt} neibs={nbs}")
+      if pt != "" and pt < min(nbs):
+        log.trace(f"pt[{x},{y}]={pt} IS locmin, neibs={nbs}")
+        locmins.append( tuple([x,y]) )
+  log.debug(f"rc locmins={locmins}")
+  return locmins
+
+def get_neib_coords(strlist: List[str], x: int, y: int) -> List[str]:
+  """Get a list of 4 neighbors of cell. May return '' as element if boundary."""
+  max_y_idx = len(strlist) - 1
+  max_x_idx = len(strlist[0]) - 1
+  nbs = []
+  if y > 0:
+    nbs.append(tuple([x, y-1]))
+  if x > 0:
+    nbs.append(tuple([x-1, y]))
+  if y < max_y_idx:
+    nbs.append(tuple([x, y+1]))
+  if x < max_x_idx:
+    nbs.append(tuple([x+1, y]))
+  return nbs
+
+def solve_d09pt2(ins):
+  """Day 9 pt1 solution."""
+  ins = ins.splitlines() |> map$(-> list(_)) |> list
+  xdim , ydim = len(ins[0]), len(ins)
+  for y in range(ydim):
+    for x in range(xdim):
+      val = int(ins[y][x])
+      if val < 9:
+        ins[y][x] = val
+      else:
+        ins[y][x] = 9
+  log.debug(f"grid[{xdim},{ydim}]...!")
+  log.trace(f"grid[{xdim},{ydim}]")
+  basinsize_lst = []
+  for lmin in get_locmins(ins):
+    basin = set()
+    to_scan = [lmin]
+    minval = ins[lmin[1]][lmin[0]]
+    while(len(to_scan)>0):
+      pt = to_scan[0]
+      basin.add(pt)
+      to_scan = to_scan[1:]
+      x,y = pt[0], pt[1]
+      ptval = ins[y][x]
+      nb_coords = get_neib_coords(ins, x, y)
+      nb_coords = nb_coords |> filter$(-> _ not in basin and ins[_[1]][_[0]] != "" and ins[_[1]][_[0]] < 9) |> list
+      nb_coords = nb_coords |> filter$(-> _ not in to_scan) |> list
+      to_scan += nb_coords
+      log.trace(f"trg-pt[{x},{y}]={ptval} len(toscan)={len(to_scan)}, nb-coords={nb_coords}")
+    log.debug(f"lmin-pt[{lmin}]={minval} basin-len={len(basin)}")
+    basinsize_lst.append(len(basin))
+  basinsize_lst = sorted(basinsize_lst)
+  log.debug(f"basinsize_lst={basinsize_lst}, {basinsize_lst[-3:]}")
+  return reduce((*),basinsize_lst[-3:])
+
+expected = 1134
+#log.setLevel(logging.DEBUG)
+log.setLevel(logging.INFO)
+result = solve_d09pt2(tests)
+aoc.assert_msg(f"test solve day 8 part 1; expected={expected}, found {result}", result == expected)
+
+# %%
+out = solve_d09pt2(ins)
+f"day 9 part 2 output: {out}" |> print
+
 # %%
