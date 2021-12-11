@@ -677,6 +677,7 @@ expected = 61229
 #result = solve_d08pt2(tests1)
 #result = solve_d08pt2(tests)
 #aoc.assert_msg(f"test solve day 7 part 2; expected={expected}, found {result}", result == expected)
+"Day 8 pt2 solution - TBD." |> print
 
 # %% [markdown]
 # ## Day 9: Smoke Basin
@@ -802,5 +803,101 @@ aoc.assert_msg(f"test solve day 8 part 1; expected={expected}, found {result}", 
 # %%
 out = solve_d09pt2(ins)
 f"day 9 part 2 output: {out}" |> print
+
+# %% [markdown]
+# ## Day 10: Syntax Scoring
+
+# %%
+"Day 10" |> print
+
+tests = """
+[({(<(())[]>[[{[]{<()<>>
+[(()[<>])]({[<{<<[]>>(
+{([(<{}[<>[]}>{[]{[(<()>
+(((({<>}<{<{<>}{[]{[]{}
+[[<[([]))<([[{}[[()]]]
+[{[{({}]{}}([{[{{{}}([]
+{<[[]]>}<{[{[{[]{()[[[]
+[<(<(<(<{}))><([]([]()
+<{([([[(<>()){}]>(<<{{
+<{([{{}}[<[[[<>{}]]]>[]]
+""".strip()
+
+# %%
+def solve_d10pt1(ins):
+  """Day 10 pt1 solution."""
+  minis = ["()", "[]", "{}", "<>"]
+  closing = [")", "]", "}", ">"]
+  scores = {")":3, "]":57, "}":1197, ">":25137}
+  ins = ins.splitlines()
+  score_sum = 0
+  for ln in ins:
+    #log.debug(f"ln={ln}")
+    while any(s in ln for s in minis):
+      ln = ln.replace("()", "").replace("[]", "").replace("{}", "").replace("<>", "")
+    #log.debug(f"  reduced={ln}")
+    if not any(s in ln for s in closing):
+      #log.debug("  is ok/open ln")
+      continue
+    ln2 = ln
+    ln2 = ln.replace("(", "").replace("[", "").replace("{", "").replace("<", "")
+    breaking = ln2[0]
+    score = scores[breaking]
+    #log.debug(f"  breaks with score={score}")
+    score_sum += score
+  return score_sum
+
+expected = 26397
+log.setLevel(logging.DEBUG)
+#log.setLevel(logging.INFO)
+result = solve_d10pt1(tests)
+aoc.assert_msg(f"test solve day 8 part 1; expected={expected}, found {result}", result == expected)
+
+# %%
+ins = aoc.read_file_to_str("./in/day10.in")
+out = solve_d10pt1(ins)
+f"day 10 part 1 output: {out}" |> print
+
+# %%
+def solve_d10pt2(ins):
+  """Day 10 pt1 solution."""
+  minis = ["()", "[]", "{}", "<>"]
+  closing = [")", "]", "}", ">"]
+  scores2 = {")":1, "]":2, "}":3, ">":4}
+  matching = {"(": ")", "[": "]", "{": "}", "<": ">" }
+  ins = ins.splitlines()
+  score_sum = 0
+  rcscores = []
+  for ln in ins:
+    #log.debug(f"ln={ln}")
+    while any(s in ln for s in minis):
+      ln = ln.replace("()", "").replace("[]", "").replace("{}", "").replace("<>", "")
+    #log.debug(f"  reduced={ln}")
+    if any(s in ln for s in closing):
+      #log.debug("  is corrupt")
+      continue
+    score = 0
+    while len(ln) > 0:
+      c = ln[-1]
+      ln = ln[:-1]
+      score = score*5 + scores2[matching[c]]
+      #log.trace(f"red-line={ln}, tmp-score={score}")
+    #log.debug(f" score={score} for line")
+    rcscores.append( score )
+  l = len(rcscores)
+  idx = l // 2
+  rc = sorted(rcscores)[idx]
+  #log.debug(f"rcscores rc={rc}, len={l}, median-idx={idx}, idx ar={rcscores}")
+  return rc
+
+expected = 288957
+log.setLevel(logging.DEBUG)
+#log.setLevel(logging.INFO)
+result = solve_d10pt2(tests)
+aoc.assert_msg(f"test solve day 8 part 1; expected={expected}, found {result}", result == expected)
+
+# %%
+out = solve_d10pt2(ins)
+f"day 10 part 2 output: {out}" |> print
 
 # %%

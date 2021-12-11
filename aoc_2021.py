@@ -416,4 +416,8 @@ print("day 4 part 2 output:", out)
 # ## Day 9
 # See coconut language solution.
 
+# %% [markdown]
+# ## Day 10
+# See coconut language solution.
+
 # %%
