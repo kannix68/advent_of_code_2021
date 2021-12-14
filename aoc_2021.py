@@ -18,6 +18,8 @@
 #
 # This solution (Jupyter notebook; python 3.10) by kannix68, @ 2021-12.  \
 # Using anaconda distro, conda v4.10.3. installation on MacOS v10.14.6 "Mojave".
+#
+# Reddit Advent of Code [solution_megathreads - adventofcode](https://www.reddit.com/r/adventofcode/wiki/solution_megathreads#wiki_december_2021)
 
 # %%
 import copy
@@ -418,6 +420,22 @@ print("day 4 part 2 output:", out)
 
 # %% [markdown]
 # ## Day 10
+# See coconut language solution.
+
+# %% [markdown]
+# ## Day 11
+# See coconut language solution.
+
+# %% [markdown]
+# ## Day 12
+# See coconut language solution.
+
+# %% [markdown]
+# ## Day 13
+# See coconut language solution.
+
+# %% [markdown]
+# ## Day 14
 # See coconut language solution.
 
 # %%

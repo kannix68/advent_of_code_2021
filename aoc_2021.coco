@@ -18,6 +18,8 @@
 #
 # This solution (Jupyter notebook; coconut 1.5.0 on python 3.7.11) by kannix68, @ 2021-12.  \
 # Using anaconda distro, conda v4.10.3, and coconut language. installation on MacOS v10.14.6 "Mojave".
+#
+# Reddit Advent of Code [solution_megathreads - adventofcode](https://www.reddit.com/r/adventofcode/wiki/solution_megathreads#wiki_december_2021)
 
 # %%
 import copy
@@ -304,6 +306,38 @@ out = solve_d03pt2(ins)
 f"day 3 part 2 output: {out}" |> print
 
 # %% [markdown]
+# ## Day 4: Giant Squid
+
+# %%
+print("Day 4, bingo!")
+
+# %%
+tests = """
+7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,26,1
+
+22 13 17 11  0
+ 8  2 23  4 24
+21  9 14 16  7
+ 6 10  3 18  5
+ 1 12 20 15 19
+
+ 3 15  0  2 22
+ 9 18 13 17  5
+19  8  7 25 23
+20 11 10 24  4
+14 21 16 12  6
+
+14 21 17 24  4
+10 16 15  9 19
+18  8 23 26 20
+22 11 13  6  5
+ 2  0 12  3  7
+""".strip()
+
+# %%
+"Day 4 TBD, see python solution" |> print
+
+# %% [markdown]
 # ## Day 5: Hydrothermal Venture
 
 # %%
@@ -415,7 +449,7 @@ aoc.assert_msg("test solve day 5 part 2", result == expected)
 
 # %%
 out = solve_d05pt2(ins)
-f"day 2 part 2 output: {out}" |> print
+f"day 5 part 2 output: {out}" |> print
 
 # %% [markdown]
 # ## Day 6: Lanternfish
@@ -899,5 +933,489 @@ aoc.assert_msg(f"test solve day 8 part 1; expected={expected}, found {result}", 
 # %%
 out = solve_d10pt2(ins)
 f"day 10 part 2 output: {out}" |> print
+
+# %% [markdown]
+# ## Day 11: Dumbo Octopus
+
+# %%
+"Day 11" |> print
+
+tests1 = """
+11111
+19991
+19191
+19991
+11111
+""".strip()
+
+tests = """
+5483143223
+2745854711
+5264556173
+6141336146
+6357385478
+4167524645
+2176841721
+6882881134
+4846848554
+5283751526
+""".strip()
+
+# %%
+class Grid:
+  """Grid as 2d list-of-list of chars"""
+  def __init__(self, los):
+    self.grid = los |> map$(list) |>list
+    self.dim = [len(los[0]), len(los)]
+    self.iter = 0
+    self.md = {}
+    self.init_nb_tns()
+  
+  def __repr__(self):
+    return f"Grid[{self.dim}] iter={self.iter} md={self.md}"
+  
+  def show(self):
+    #aoc.represent_strlist(self.grid)
+    los = self.grid |> map$(-> str.join("", _))
+    return "grid-show:\n" + str.join("\n", los)
+  
+  def init_nb_tns(self):
+    """Diagonal transformations."""
+    lst = []
+    for x in range(-1, 2):
+      for y in range(-1, 2):
+        if (x,y) == (0,0):
+          continue
+        else:
+          lst.append( (x,y) )
+    self.nb_tns = lst
+
+
+# %%
+def raise1(g, coord):
+  x,y = coord[0], coord[1]
+  gg = g.grid
+  v = gg[y][x]
+  if v == "a":
+    return False
+  else:
+    i = int(v)
+    if i == 9:
+      gg[y][x] = "a"
+      return True
+    else:
+      gg[y][x] = str(i+1)
+      return False
+
+def raise_neibs_en(g, coord):
+  neibs = g.nb_tns |> map$(->(_[0]+coord[0], _[1]+coord[1])) |> list
+  neibs = neibs |> filter$(-> _[0] >= 0 and _[0] < g.dim[0]) |> list
+  neibs = neibs |> filter$(-> _[1] >= 0 and _[1] < g.dim[1]) |> list
+  log.debug(f"neibs={neibs}")
+  new_to_flash = []
+  for neib in neibs:
+    if raise1(g, neib):
+      log.debug(f"raise_neibs_en: new2flash={neib}")
+      new_to_flash(neib)
+  # TODO: neu geflashte zurückliefern
+  return new_to_flash
+
+def raise_en(g):
+  gg = g.grid
+  flashed = []
+  flashs_num = 0
+  init = True
+  while(len(flashed)>0 or init):
+    if init:
+      init = False
+    else:
+      lastflashed = flashed
+      flashed = flashed[1:]
+      flashed += raise_neibs_en(g, lastflashed)
+    for x in range(g.dim[0]):
+      for y in range(g.dim[1]):
+        coord = (x,y)
+        if coord == (0,0):
+          flashed = []
+        if raise1(g, coord):
+          log.debug(f"flashed {(x,y)}")
+          flashed.append((x,y))
+          flashs_num += 1
+    break
+    
+def solve_d11pt1(ins):
+  """Day 11 pt1 solution."""
+  g = Grid(ins.splitlines())
+  #g = g.iterate(ins)
+  log.info(f"initial: {g}")
+  log.info(g.show())
+  log.debug(f" tns: {g.nb_tns}")
+  raise_en(g)
+  log.info(g.show())
+  raise_en(g)
+  log.info(g.show())
+  return None
+
+expected = 1656
+n = 100
+log.setLevel(logging.DEBUG)
+#log.setLevel(logging.INFO)
+#result = solve_d11pt1(tests)
+#aoc.assert_msg(f"test solve day 11 part 1; expected={expected}, found {result}", result == expected)
+"Day 11 TBD" |> print
+
+# %% [markdown]
+# ## Day 12: Passage Pathing
+
+# %%
+"Day 12" |> print
+
+tests = """
+start-A
+start-b
+A-c
+A-b
+b-d
+A-end
+b-end
+""".strip()
+
+tests2 = """
+dc-end
+HN-start
+start-kj
+dc-start
+dc-HN
+LN-dc
+HN-end
+kj-sa
+kj-HN
+kj-dc
+""".strip()
+
+# %%
+import networkx as nx  # Graph theory module
+import matplotlib.pyplot as plt
+
+def solve_d12pt1(ins):
+  """Day 12 pt1 solution."""
+  ins = ins.splitlines()
+  g = nx.DiGraph()
+  for ln in ins:
+    #nd_st, nd_en = ln.split("-")
+    nodes = ln.split("-")
+    if "start" in nodes:
+      other = nodes |> filter$(-> not _ == "start") |> list |> .[0]
+      g.add_edge("start", other)
+    elif "end" in nodes:
+      other = nodes |> filter$(-> not _ == "end") |> list |> .[0]
+      g.add_edge(other, "end")
+    else:
+      g.add_edge(nodes[0], nodes[1])
+      g.add_edge(nodes[1], nodes[0])
+  log.info(f"G:: nodes={g.nodes} edges={g.edges}")
+  p = nx.shortest_path(g, source="start", target="end")
+  log.info(f"G:: shortest_path={p}")
+  ps = nx.all_simple_paths(g, source="start", target="end") |> list
+  log.info(f"G:: all_simple_paths={ps}")
+  log.info(f"G:: nodes_with_selfloops={list(nx.nodes_with_selfloops(g))}")
+  log.info(f"G:: simple_cycles={list(nx.simple_cycles(g))}")
+  #ps = nx.all_paths(g, source="A", target="A") |> list
+  #log.info(f"G:: all_simple_paths[A->A]={ps}")
+  #nx.draw_networkx(g)
+  #nx.draw_networkx(g, pos=nx.circular_layout(g))
+  #nx.draw_networkx(g, pos=nx.random_layout(g))
+  #nx.draw_networkx(g, pos=nx.spiral_layout(g))
+  #nx.draw_networkx(g, pos=nx.spring_layout(g)) # no edge overlaps !
+  #nx.draw_networkx(g, pos=nx.planar_layout(g))
+  #nx.draw_networkx(g, pos=nx.kamada_kawai_layout(g))
+  nx.draw_networkx(g, pos=nx.spectral_layout(g))
+  plt.show()
+  return None
+
+expected = 10
+log.setLevel(logging.DEBUG)
+#log.setLevel(logging.INFO)
+#result = solve_d12pt1(tests2)
+#aoc.assert_msg(f"test solve day 8 part 1; expected={expected}, found {result}", result == expected)
+"Day 12 TBD" |> print
+
+# %% [markdown]
+# ## Day 13: Transparent Origami
+
+# %%
+"Day 13" |> print
+
+tests = """
+6,10
+0,14
+9,10
+0,3
+10,4
+4,11
+6,0
+6,12
+4,1
+0,13
+10,12
+3,4
+3,0
+8,4
+1,10
+2,14
+8,10
+9,0
+
+fold along y=7
+fold along x=5
+""".strip()
+
+# %%
+def nda_repr(nda):
+  s = str(nda).replace(" ","").replace("[","").replace("]","")
+  return s.replace("0", ".").replace("1", "#")
+  
+def solve_d13pt1(ins, fold_count=None):
+  """Day 13 pt1 solution."""
+  backd = np.get_printoptions()
+  np.set_printoptions(threshold=32_000, linewidth=32_000)
+  ins, cmds = ins.split("\n\n")
+  ins = ins.splitlines() |> map$(-> (_.split(",") |> map$(int) |> list) ) |> list
+  cmds = cmds.splitlines() |> map$(-> (_.replace("fold along ", "")) ) \
+    |> map$(-> (_.split("=")) ) |> list
+  for cmd in cmds:
+    cmd[1] = int(cmd[1])
+  maxx = ins |> map$(-> _[0] ) |> list |> max$()
+  maxy = ins |> map$(-> _[1] ) |> list |> max$()
+  log.debug(f"ins={ins} max=[{maxx}, {maxy}] , cmds={cmds}")
+  #nda = np.ndarray( shape=[maxx+1, maxy+1], dtype='i1' )
+  nda = np.full(shape=[maxy+1, maxx+1], fill_value=0, dtype="i1")
+  for cell in ins:
+    nda[cell[1], cell[0]] = 1
+  log.info("initial MAT\n" + nda_repr(nda))
+  log.info("initial MAT\n" + str(nda))
+  ct = -1
+  for idx, cmd in enumerate(cmds):
+    if fold_count is not None and idx >= fold_count:
+      log.info(f"break after fold no {fold_count}")
+      break
+    dim, ofs = cmd
+    log.info(f"fold {dim} on {ofs}")
+    if dim == "y":
+      a = nda[0:ofs,]
+      b = nda[ofs+1:,]
+      b = np.flipud(b) # flip(axis=0)
+    elif dim == "x":
+      a = nda[:,0:ofs]
+      b = nda[:,ofs+1:]
+      b = np.fliplr(b) # flip(axis=1)
+    log.debug(f"? a.shape {a.shape} == {b.shape} b.shape ?")
+    if a.shape[0] != b.shape[0]:
+      m = max(a.shape[0], b.shape[0])
+      log.info(f"reshape y max={m}")
+      if a.shape[0] < m:
+        a.resize([m, a.shape[1]])
+      else:
+        b.resize([m, b.shape[1]])
+    elif a.shape[1] != b.shape[1]:
+      log.info(f"reshape x max={m}")
+      m = max(a.shape[1], b.shape[1])
+      if a.shape[0] < m:
+        a.resize([a.shape[0], m])
+      else:
+        b.resize([b.shape[0], m])
+    log.debug(f"? a.shape {a.shape} == {b.shape} b.shape ?")
+    assert(a.shape == b.shape)
+    c = np.sign(a+b)
+    nda = c
+    #log.info("1\n" + nda_repr(a))
+    #log.info("2\n" + nda_repr(b))
+    #log.info("2t\n" + nda_repr(bb))
+    ct = np.sum(c)
+    log.info(f"folded {dim} on {ofs}; count={ct}; MAT=\n" + nda_repr(c))
+  #np.set_printoptions(backd)
+  np.set_printoptions(threshold=backd["threshold"], linewidth=backd["linewidth"])
+  return ct
+
+expected = 17
+log.setLevel(logging.DEBUG)
+#log.setLevel(logging.INFO)
+#result = solve_d13pt1(tests, fold_count=1)
+#aoc.assert_msg(f"test solve day 13 part 1; expected={expected}, found {result}", result == expected)
+"Day 13 TBD" |> print
+
+# %%
+ins = aoc.read_file_to_str("./in/day13.in")
+#out = solve_d13pt1(ins)
+#f"day 13 part 1 output: {out}" |> print
+"Day 13 TBD" |> print
+
+# %%
+
+# %% [markdown]
+# ## Day 14: Extended Polymerization
+
+# %%
+"Day 14" |> print
+
+tests = """
+NNCB
+
+CH -> B
+HH -> N
+CB -> H
+NH -> C
+HB -> C
+HC -> B
+HN -> C
+NN -> C
+BH -> H
+NC -> B
+NB -> B
+BN -> B
+BB -> N
+BC -> B
+CC -> N
+CN -> C
+""".strip()
+
+# %%
+def get_poly(ins, steps=1):
+  """get the polymer chain after n steps"""
+  ins, cmds = ins.split("\n\n")
+  cmds = cmds.splitlines() |> map$(-> _.split(" -> ")) |> list
+  log.trace(f"ins={ins} cmds={cmds}")
+  d = {}
+  for cmd in cmds:
+    inps, outps = cmd
+    outps = inps[0] + outps + inps[1]
+    d[inps] = outps
+  log.trace(f"  d={d}")
+  for stepidx in range(steps):
+    o = ""
+    for idx in range(len(ins)-1):
+      pr = ins[idx:idx+2]
+      log.trace(f"  pair={pr}")
+      if pr in d.keys():
+        o += d[pr][0:2] # omit last input letter
+      else:
+        log.warn("pair {pr} not in recipes")
+    o += ins[-1]
+    log.trace(f"step#{stepidx+1} out={o}")
+    ins = o
+  return o
+
+def solve_d14pt1(ins, steps=1):
+  """Day 14 pt1 solution."""
+  res = get_poly(ins, steps=steps)
+  freqs = defaultdict(int)
+  for c in res:
+    freqs[c] += 1
+  rc = max(freqs.values()) - min(freqs.values())
+  log.info(f"rc={rc}, freqs={freqs}")
+  return rc
+
+
+expected = [
+  [1, "NCNBCHB"],
+  [2, "NBCCNBBBCBHCB"],
+  [3, "NBBBCNCCNBBNBNBBCHBHHBCHB"],
+  [4, "NBBNBNBBCCNBCNCCNBBNBBNBBBNBBNBBCBHCBHHNHCBBCBHCB"],
+]
+log.setLevel(logging.DEBUG)
+#log.setLevel(logging.INFO)
+for e in expected:
+  n, expc = e[0], e[1]
+  res = get_poly(tests, steps=n)
+  aoc.assert_msg(f"test day 14 get_poly; n={n} expected={expc}, found {res}", res == expc)
+
+# after step 5 it has len 97
+# after step 10 it has len 3073
+res = get_poly(tests, steps=5)
+expc, reslen = 97, len( res )
+aoc.assert_msg(f"test solve day 14 part 1; n={n} len={expc}, found {reslen}", reslen == expc)
+
+res = get_poly(tests, steps=10)
+expc, reslen = 3073, len( res )
+aoc.assert_msg(f"test solve day 14 part 1; n={n} len={expc}, found {reslen}", reslen == expc)
+
+
+n = 10
+expc = 1588
+rc = solve_d14pt1(tests, steps=10)
+aoc.assert_msg(f"test solve day 14 part 1; n={n} len={expc}, found {rc}", rc == expc)
+
+# %%
+ins = aoc.read_file_to_str("./in/day14.in")
+out = solve_d14pt1(ins, steps=10)
+f"day 14 part 1 output: {out}" |> print
+
+# %%
+"Day 14 part 2" |> print
+
+def get_polytns(ins, steps=1):
+  """get the polymer chain after n steps"""
+  ins, cmds = ins.split("\n\n")
+  cmds = cmds.splitlines() |> map$(-> _.split(" -> ")) |> list
+  log.trace(f"ins={ins} cmds={cmds}")
+  cmdsd = {}
+  for cmd in cmds:
+    inps, outp = cmd
+    outps = []
+    outps.append(inps[0] + outp)
+    outps.append(outp + inps[1])
+    cmdsd[inps] = outps
+  log.trace(f"  cmds={cmdsd}")
+  pairs = defaultdict(int)
+  for idx in range(len(ins)-1):
+    pr = ins[idx:idx+2]
+    pairs[pr] += 1
+  log.trace(f"  pairs0={pairs}")
+  for idx in range(steps):
+    newd = pairs.copy()
+    for inpair, ct in pairs.items():
+      op1, op2 = cmdsd[inpair]
+      log.trace(f"  tn: {inpair}:{ct} tn={[op1, op2]}")
+      newd[inpair] -= ct
+      newd[op1] += ct
+      newd[op2] += ct
+    pairs = newd
+  return pairs
+
+def solve_d14pt2(ins, steps=1):
+  """Day 14 pt1 solution."""
+  lastchar = ins.splitlines()[0][-1]
+  res = get_polytns(ins, steps=steps)
+  log.trace(f"get_polytns res={res} last-c={lastchar}")
+  freqs = defaultdict(int)
+  for pair, ct in res.items():
+    p1, p2 = pair
+    freqs[p1] += ct
+    #freqs[p2] += ct # omit doubles
+  freqs[lastchar] += 1 # fix frequencies, add last letter in chain
+  log.trace(f"  freqs={freqs}")
+  rc = max(freqs.values()) - min(freqs.values())
+  return rc
+
+rc = solve_d14pt2(tests, steps=0)
+
+rc = solve_d14pt2(tests, steps=1)
+#print("NCNBCHB")
+
+rc = solve_d14pt2(tests, steps=2)
+#print("NBCCNBBBCBHCB")
+
+#rc = solve_d14pt2(tests, steps=2)
+
+n = 10
+expc = 1588
+rc = solve_d14pt2(tests, steps=n)
+aoc.assert_msg(f"test solve day 14 part 2; n={n} len={expc}, found {rc}", rc == expc)
+
+rc = solve_d14pt2(ins, steps=10)
+log.info(f"redo pt1={rc}")
+
+out = solve_d14pt2(ins, steps=40)
+f"day 14 part 2 output: {out}" |> print
 
 # %%
